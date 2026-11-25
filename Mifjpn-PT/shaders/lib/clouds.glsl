@@ -258,7 +258,7 @@ float cloudShadow(vec3 worldPos, vec3 lightDir) {
 
     vec2  projXZ = worldPos.xz + lightDir.xz * ((planeY - worldPos.y) / lightDir.y);
     float cover  = cloudCoverageMap(projXZ);
-    return 1.0 - 0.78 * CLOUD_SHADOW_STRENGTH * smoothstep(0.04, 0.55, cover);
+    return 1.0 - 0.68 * CLOUD_SHADOW_STRENGTH * smoothstep(0.28, 0.75, cover);
 }
 
 #endif

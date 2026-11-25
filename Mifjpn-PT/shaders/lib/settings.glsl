@@ -49,6 +49,8 @@
 #define RAY_TRACED_REFLECTIONS
 //#define ROUGH_REFLECTIONS
 #define SHADOWS
+//#define SHADOW_DEBUG
+#define CONTACT_SHADOWS
 #define COLORED_SHADOWS
 #define BLOOM
 #define VIGNETTE
@@ -171,7 +173,7 @@ const float sunPathRotation = -35.0; // [-60.0 -45.0 -35.0 -25.0 -15.0 0.0 15.0 
 #define RT_STEPS 32 // [12 16 24 32 48 64 128]
 
 const int   shadowMapResolution = 2048; // [1024 2048 3072 4096 6144]
-const float shadowDistance      = 128.0; // [64.0 96.0 128.0 160.0 192.0 256.0]
+const float shadowDistance      = 192.0; // [64.0 96.0 128.0 160.0 192.0 256.0 320.0]
 #define SHADOW_FILTER_SIZE 1.00 // [0.00 0.50 0.75 1.00 1.50 2.00]
 #define SHADOW_SAMPLES 8 // [4 6 8 12 16]
 
@@ -189,6 +191,8 @@ const float eyeBrightnessHalflife    = 6.0;
 const float centerDepthHalflife      = 1.0;
 const float ambientOcclusionLevel    = 1.0;
 const float shadowIntervalSize       = 2.0;
+const float shadowDistanceRenderMul  = 1.0;
+const float entityShadowDistanceMul  = 1.0;
 const bool  generateShadowMipmap     = false;
 const bool  shadowHardwareFiltering  = false;
 
@@ -223,5 +227,25 @@ const float MAT_ENTITY   = 10.0;
 const float MAT_HAND     = 11.0;
 
 const vec3 WATER_TAG = vec3(0.02, 0.49, 0.97);
+
+// ---- Iris Option Registration (standalone #ifdef required by Iris parser) ----
+#ifdef LABPBR
+#endif
+#ifdef POM
+#endif
+#ifdef DISTANT_RAIN
+#endif
+#ifdef RAIN_PUDDLES
+#endif
+#ifdef NETHER_LAVA
+#endif
+#ifdef PHYSICS_MOD_SUPPORT
+#endif
+#ifdef END_SHADOWS
+#endif
+#ifdef END_MOTES
+#endif
+#ifdef SHADOW_DEBUG
+#endif
 
 #endif

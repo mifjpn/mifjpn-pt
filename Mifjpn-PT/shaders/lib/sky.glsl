@@ -45,8 +45,8 @@ vec3 getLightColor() {
     return endLightColor();
 #else
     float elev    = sunDirWorld().y;
-    vec3  sunRad  = sunColorAt(elev) * (3.1 * SUN_BRIGHTNESS * (0.30 + 0.70 * smoothstep(0.0, 0.45, elev)));
-    vec3  moonRad = vec3(0.55, 0.68, 1.00) * (0.30 * MOON_BRIGHTNESS * smoothstep(-0.05, 0.12, -elev));
+    vec3  sunRad  = sunColorAt(elev) * (4.6 * SUN_BRIGHTNESS * (0.35 + 0.65 * smoothstep(0.0, 0.42, elev)));
+    vec3  moonRad = vec3(0.55, 0.68, 1.00) * (0.44 * MOON_BRIGHTNESS * smoothstep(-0.05, 0.12, -elev));
     return (sunRad + moonRad) * (1.0 - rainStrength * 0.80);
 #endif
 }
@@ -376,17 +376,24 @@ vec3 skyLightFrom(vec3 rayDir, vec3 zenCol, vec3 horCol) {
     float elev     = sunDir.y;
     float nightFac = nightAmount();
 
-    vec3 dome = mix(zenCol, horCol, pow(1.0 - max(rayDir.y, 0.0), 2.4));
-    dome      = mix(vec3(luma(dome)), dome, 0.62);
-    dome     += sunColorAt(elev) * pow(max(dot(rayDir, sunDir), 0.0), 3.0) * (0.20 * (1.0 - smoothstep(0.0, 0.50, elev)));
+#ifdef PHYSICAL_SKY
+    vec3 horTamed = horCol / (1.0 + luma(horCol) * 0.85);
+    vec3 dome     = mix(zenCol, horTamed, pow(1.0 - max(rayDir.y, 0.0), 2.8));
+    float ambGain = 0.82;
+#else
+    vec3 dome     = mix(zenCol, horCol, pow(1.0 - max(rayDir.y, 0.0), 2.4));
+    float ambGain = 1.15;
+#endif
+    dome  = mix(vec3(luma(dome)), dome, 0.68);
+    dome += sunColorAt(elev) * pow(max(dot(rayDir, sunDir), 0.0), 3.0) * (0.14 * (1.0 - smoothstep(0.0, 0.50, elev)));
 
-    vec3 irrad = dome * (1.55 * AMBIENT_STRENGTH * (1.0 - rainStrength * 0.35));
-    irrad     *= mix(vec3(1.0), vec3(0.80, 0.93, 1.18), SHADOW_BLUENESS * 0.70);
+    vec3 irrad = dome * (ambGain * AMBIENT_STRENGTH * (1.0 - rainStrength * 0.35));
+    irrad     *= mix(vec3(1.0), vec3(0.76, 0.91, 1.22), SHADOW_BLUENESS * 0.78);
     irrad     += vec3(0.012, 0.018, 0.040) * (NIGHT_VISIBILITY * nightFac * AMBIENT_STRENGTH);
 
     if (rayDir.y < 0.0) {
         float directE = luma(getLightColor()) * max(lightDirWorld().y, 0.05);
-        irrad = mix(irrad, vec3(0.30, 0.34, 0.24) * (directE * 0.55 + luma(irrad) * 0.60), 1.0 - smoothstep(-0.35, 0.0, rayDir.y));
+        irrad = mix(irrad, vec3(0.28, 0.31, 0.24) * (directE * 0.28 + luma(irrad) * 0.55), 1.0 - smoothstep(-0.35, 0.0, rayDir.y));
     }
     return irrad;
 }
